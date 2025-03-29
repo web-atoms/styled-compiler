@@ -109,27 +109,3 @@ Currently the project is in planning stage.
 3. .css-js
 4. .css.js
 5. .less.js
-
-## Features
-
-### CSS Import
-Doing CSS import or less import is an important feature, and we want to preserve the loader in such way that imports are not expanded in less file.
-
-```javascript
-import styled from "styled-compiler";
-
-import relativeStyle from "./imported.less.js";
-
-export default styled.css `
-   @import (less) "${relativeStyle}";
-`;
-
-```
-
-This will result in following less file,
-```less
-
-@import (less) "./imported.less";
-
-```
-

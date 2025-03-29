@@ -1,1 +1,1 @@
-export * from "./src/styled.js";
+export * from "./dist/index.js";
