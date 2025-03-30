@@ -10,7 +10,10 @@
     "type": "git",
     "url": "git+https://github.com/web-atoms/styled-compiler.git"
   },
-  "license": "ISC",
+  "bin": {
+    "styled-compiler": "./bin/index.js"
+  },
+    "license": "ISC",
   "author": "",
   "type": "module",
   "main": "index.js",
