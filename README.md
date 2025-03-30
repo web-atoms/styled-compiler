@@ -7,6 +7,14 @@ Some how CSS post processing are little complicated, and do not provide best edi
 ## So what does this do?
 Compiles a simple JavaScript file that exports default `styled.css` object into a CSS file with map file along with `nested` and `cssnano` plugins for postcss.
 
+## Getting Started
+### Installation
+`npm install -D @web-atoms/styled-compiler`
+### Run
+`styled-compiler inputFile.css.js`
+
+
+
 ## Examples
 
 body.css.js
@@ -32,6 +40,7 @@ export default styled.css `
 Command: `styled-compiler body.css.js`
 
 This will generate following along with map.
+
 body.css
 ```css
 body{font-weight:500}body div{color:#ff0}body section{color:green}
