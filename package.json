@@ -1,6 +1,6 @@
 {
   "name": "@web-atoms/styled-compiler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Compiles Styled export to CSS at compile time",
   "homepage": "https://github.com/web-atoms/styled-compiler#readme",
   "bugs": {
@@ -13,7 +13,7 @@
   "bin": {
     "styled-compiler": "./bin/index.js"
   },
-    "license": "ISC",
+  "license": "ISC",
   "author": "",
   "type": "module",
   "main": "index.js",
