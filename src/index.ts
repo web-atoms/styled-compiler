@@ -6,6 +6,8 @@ export { default as styled} from "./styled.js";
 
 import postCss from "postcss";
 import postCssNested from "postcss-nested";
+import postCssImport from "postcss-import";
+import postCssImportExtGlob from "postcss-import-ext-glob";
 import cssNano from "cssnano";
 
 const inputFile = process.argv[2];
@@ -35,6 +37,8 @@ async function run() {
         await writeFile(inputSourceMap, JSON.stringify(sourceMap.toJSON()));
         const result = await postCss([
             postCssNested,
+            postCssImportExtGlob({ sort: "desc"}),
+            postCssImport,
             cssNano({ preset: "default"})
         ])
             .process(source, {
