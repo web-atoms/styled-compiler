@@ -19,11 +19,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "manual-test": "node ./index.js ./manual-test/body.css.js",
+    "manual-test": "node --enable-source-maps ./index.js ./manual-test/body.css.js",
     "postversion": "git push --follow-tags"
   },
   "dependencies": {
     "cssnano": "^7.0.6",
+    "glob": "^11.0.1",
     "postcss": "^8.5.3",
     "postcss-import": "^16.1.0",
     "postcss-import-ext-glob": "^2.1.1",

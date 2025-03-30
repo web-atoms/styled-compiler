@@ -9,6 +9,8 @@ import postCssNested from "postcss-nested";
 import postCssImport from "postcss-import";
 import postCssImportExtGlob from "postcss-import-ext-glob";
 import cssNano from "cssnano";
+import SourceMapReMap from "./SourceMapReMap.js";
+import FilePath from "./FilePath.js";
 
 const inputFile = process.argv[2];
 const inputFileNameParsed = path.parse(inputFile);
@@ -22,19 +24,24 @@ const outputFile = process.argv[3] ?? name + ".css";
 async function run() {
 
     try {
-        const filePath = path.join(process.cwd(), inputFile);
+        const filePath = path.join(process.cwd(), inputFile).replaceAll("\\", "/");
         const url = pathToFileURL(filePath).toString();
 
         console.log(`Loading ${url}`);
-        const r = await import(url);
-
+        let r = await import(url);
         const style = r.default as SourceNode;
+
+        const fp = new FilePath(dir);
+
+        const sourceRoot = fp.webPath;
+
 
         const outputFilePath = path.join(dir, outputFile);
 
-        const { code: source, map: sourceMap } = style.toStringWithSourceMap();
+        const { code: source, map: sourceMap } = style.toStringWithSourceMap( {
+        });
         const inputSourceMap = filePath + ".map";
-        await writeFile(inputSourceMap, JSON.stringify(sourceMap.toJSON()));
+        await writeFile(inputSourceMap, SourceMapReMap.save(sourceMap, sourceRoot));
         const result = await postCss([
             postCssNested,
             postCssImportExtGlob({ sort: "desc"}),
@@ -48,7 +55,7 @@ async function run() {
                 },
                 to: outputFilePath
             });
-        await unlink(inputSourceMap);
+        // await unlink(inputSourceMap);
         await writeFile(outputFilePath, `${result.css}\n/*# sourceMappingURL=${outputFile}.map */`);
         await writeFile(outputFilePath + ".map", JSON.stringify(result.map.toJSON()));
 

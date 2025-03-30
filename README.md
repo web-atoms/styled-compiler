@@ -59,6 +59,5 @@ Though we are running this project for production, there may be some bugs or som
 # Planned Features
 
 1. Watch support
-2. Process multiple files
 
 For now since we are using some sort of build tasks to compile files, we currently do not need this, but pull requests are welcome to add any features to support any file processing required for your build tools.
