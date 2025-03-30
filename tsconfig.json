@@ -8,6 +8,7 @@
         "outDir": "dist",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "allowSyntheticDefaultImports": true,
         "removeComments": true,
         "declaration": true,
         "declarationMap": true,

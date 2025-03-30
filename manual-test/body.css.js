@@ -1,14 +1,15 @@
 import styled from "../dist/styled.js";
 
-const animations = ["fade-in", "fade-out"].map((name) => styled.css `
-    & .${name} {
-        animation-name: ${name};
-    }
+const animations = [["div", "yellow"], ["section", "green"]].map(([name, color]) =>
+    styled.css `
+        & ${name} {
+            color: ${color};
+        }
 `);
 
 export default styled.css `
-
-    .animations {
+    body {
+        font-weight: 500;
         ${animations}
     }
 

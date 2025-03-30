@@ -1,111 +1,55 @@
 # Styled-Compiler
 Compiles Styled export to CSS at compile time
 
-## Why?
-Because other CSS processors are too complex, and some have unnecessary political alignments (which may become problematic in future due to change in their license or world politics). Some how LESS's syntax is very complicated when it comes to write simple foreach or conditional statements. Things like combing strings, replacing strings etc often leads to error due to limited editor support. Since VS Code provides excellent support for wiritng JavaScript, so it is easy to write many large LESS/CSS files easily broken down into many smaller JS files.
+## Why, Why, Why another tool?
+Some how CSS post processing are little complicated, and do not provide best editing experience and we cannot debug what is being generated.
 
 ## So what does this do?
-Compiles a simple JavaScript file that contains default `styled` css object into a CSS file with map file.
+Compiles a simple JavaScript file that exports default `styled.css` object into a CSS file with map file along with `nested` and `cssnano` plugins for postcss.
 
 ## Examples
 
-animation.css-js
+body.css.js
 ```js
-import styled from "styled-compiler";
+import styled from "@web-atoms/styled-compiler";
 
-const durations = [0.1, 0.3, 0.7];
-
-const duration = (v, i) => styled.css `
-    & .animation-duration-${i}: {
-        animation-duration: ${v}s;
-    }
-`;
+const animations = [["div", "yellow"], ["section", "green"]].map(([name, color]) =>
+    styled.css `
+        & ${name} {
+            color: ${color};
+        }
+`);
 
 export default styled.css `
-
-    .animations {
-
-        & span {
-            ${durations
-                .map(duration)}
-        }
-        & div {
-            ${durations
-                .map(duration)}
-        }
+    body {
+        font-weight: 500;
+        ${animations}
     }
 
 `;
 ```
 
-Command: `styled-compiler animation.css-js animation.css`
+Command: `styled-compiler body.css.js`
 
 This will generate following along with map.
-animation.css
+body.css
 ```css
-.animations span .animation-duration-0 {
-    animation-duration: 0.1s;
-}
-.animations span .animation-duration-1 {
-    animation-duration: 0.3s;
-}
-.animations span .animation-duration-2 {
-    animation-duration: 0.7s;
-}
-.animations div .animation-duration-0 {
-    animation-duration: 0.1s;
-}
-.animations div .animation-duration-1 {
-    animation-duration: 0.3s;
-}
-.animations div .animation-duration-2 {
-    animation-duration: 0.7s;
-}
+body{font-weight:500}body div{color:#ff0}body section{color:green}
+/*# sourceMappingURL=body.css.map */
 ```
 
-Command: `styled-compiler animation.css-js animation.less`
+# Benefits
+1. We can write most pre css logic in JavaScript where we have the best editing feature.
+2. Load complex JavaScript objects via imports and write for each or any syntax that is available in JavaScript easily.
+3. By prefixing tagged template with `styled.css` you get automatic intellisense if styled extensions are installed.
+4. Source maps will correctly point to actual JavaScript that generated the css.
 
-This will generate following along.
-animation.less
+# Project Status - Beta
+Though we are running this project for production, there may be some bugs or some improvements underway as they happen.
 
-```less
-.animations {
-    & span {
-        & .animation-duration-0 {
-            animation-duration: 0.1s;
-        }
-        & .animation-duration-1 {
-            animation-duration: 0.3s;
-        }
-        & .animation-duration-2 {
-            animation-duration: 0.7s;
-        }
-    }
-    & div {
-        & .animation-duration-0 {
-            animation-duration: 0.1s;
-        }
-        & .animation-duration-1 {
-            animation-duration: 0.3s;
-        }
-        & .animation-duration-2 {
-            animation-duration: 0.7s;
-        }
-    }
-}
-```
+# Planned Features
 
+1. Watch support
+2. Process multiple files
 
-# So what is happening?
-
-The compiler will convert given style objects into LESS file and internally will convert less into CSS.
-
-# Stage - PLANNING
-Currently the project is in planning stage.
-
-## Preferred File Extensions
-1. .lessx
-2. .less-js
-3. .css-js
-4. .css.js
-5. .less.js
+For now since we are using some sort of build tasks to compile files, we currently do not need this, but pull requests are welcome to add any features to support any file processing required for your build tools.

@@ -26,7 +26,7 @@
             ],
             "program": "${workspaceFolder}\\index.js",
             "args": [
-                "./manual-test/body.less.js"
+                "./manual-test/body.css.js"
             ],
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"

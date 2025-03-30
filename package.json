@@ -18,8 +18,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "concat-with-sourcemaps": "^1.1.0",
-    "less": "^4.2.2",
+    "cssnano": "^7.0.6",
+    "postcss": "^8.5.3",
+    "postcss-nested": "^7.0.2",
     "source-map": "^0.7.4",
     "stacktrace-parser": "^0.1.11"
   },

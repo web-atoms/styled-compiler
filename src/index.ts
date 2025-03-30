@@ -1,19 +1,21 @@
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { writeFile } from "node:fs/promises";
+import { unlink, writeFile } from "node:fs/promises";
 import type { SourceNode } from "source-map";
-import { processLess } from "./processLess.js";
 export { default as styled} from "./styled.js";
-import less from "less";
+
+import postCss from "postcss";
+import postCssNested from "postcss-nested";
+import cssNano from "cssnano";
 
 const inputFile = process.argv[2];
 const inputFileNameParsed = path.parse(inputFile);
 let name = inputFileNameParsed.name;
 const dir = inputFileNameParsed.dir;
-if (/\.(less|css)$/i.test(name)) {
+if (/\.(css)$/i.test(name)) {
     name = name.split(".").slice(0, -1).join(".");
 }
-const outputFile = process.argv[3] ?? name + ".less";
+const outputFile = process.argv[3] ?? name + ".css";
 
 async function run() {
 
@@ -29,25 +31,22 @@ async function run() {
         const outputFilePath = path.join(dir, outputFile);
 
         const { code: source, map: sourceMap } = style.toStringWithSourceMap();
-
-        await writeFile(outputFilePath, source);
-        await writeFile(outputFilePath + ".map", JSON.stringify(sourceMap.toJSON()));
-        if (style[processLess]) {
-            // process less...
-
-            const { code, map } = style.toStringWithSourceMap();
-            const output = await less.render(code, {
-                filename: name + ".less",
-                sourceMap: {}
+        const inputSourceMap = filePath + ".map";
+        await writeFile(inputSourceMap, JSON.stringify(sourceMap.toJSON()));
+        const result = await postCss([
+            postCssNested,
+            cssNano({ preset: "default"})
+        ])
+            .process(source, {
+                from: filePath,
+                map: {
+                    prev: () => inputSourceMap
+                },
+                to: outputFilePath
             });
-
-            const cssFile = path.join(dir, name + ".css");
-
-            await writeFile(cssFile, output.css);
-            await writeFile(cssFile + ".map", JSON.stringify(map.toJSON()));
-    
-
-        }
+        await unlink(inputSourceMap);
+        await writeFile(outputFilePath, `${result.css}\n/*# sourceMappingURL=${outputFile}.map */`);
+        await writeFile(outputFilePath + ".map", JSON.stringify(result.map.toJSON()));
 
         process.exit(0);
     } catch (error) {

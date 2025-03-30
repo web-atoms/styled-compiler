@@ -3,7 +3,7 @@ import styled from "../styled.js";
 export default function() {
 
 
-    const node = styled.less `
+    const node = styled.css `
        body: {
           font-weight: bold;
        }
