@@ -22,6 +22,8 @@ if (/\.(css)$/i.test(name)) {
 }
 const outputFile = process.argv[3] ?? name + ".css";
 
+const importJs = postCssImportJs();
+
 async function run() {
 
     try {
@@ -44,11 +46,12 @@ async function run() {
         const inputSourceMap = filePath + ".map";
         await writeFile(inputSourceMap, SourceMapReMap.save(sourceMap, sourceRoot));
         const result = await postCss([
+            // importJs,
             postCssImportExtGlob({ sort: "desc"}),
-            postCssImportJs(),
+            importJs,
             postCssImport,
             postCssNested,
-            cssNano({ preset: "default"})
+            // cssNano({ preset: "default"})
         ])
             .process(source, {
                 from: filePath,
@@ -58,7 +61,7 @@ async function run() {
                 to: outputFilePath
             });
         // await unlink(inputSourceMap);
-        await writeFile(outputFilePath, `${result.css}\n/*# sourceMappingURL=${outputFile}.map */`);
+        await writeFile(outputFilePath, result.css);
         await writeFile(outputFilePath + ".map", JSON.stringify(result.map.toJSON()));
 
         process.exit(0);

@@ -5,7 +5,7 @@ import SourceMapReMap from "./SourceMapReMap.js";
 import { writeFile } from "fs/promises";
 import FilePath from "./FilePath.js";
 
-const jsProcessed = Symbol("jsProcessed");
+const jsProcessed = Symbol("jsProcessed-1");
 
 const postCssImportJs =(opts = {}) => {
     return {
@@ -57,19 +57,24 @@ const postCssImportJs =(opts = {}) => {
 
                         const cssFilePath = nodeFilePath.filePath.replace(".css.js", ".css");
 
+                        const csp = new FilePath(cssFilePath);
+
                         const { code: source, map: sourceMap } = fileResult.toStringWithSourceMap({});
-                        await writeFile(cssFilePath, source, "utf-8");
+                        await writeFile(cssFilePath, `${source}\n/*# sourceMappingURL=${csp.name}.map */`, "utf-8");
                         await writeFile(cssFilePath + ".map", SourceMapReMap.save(sourceMap, sourceRoot), "utf-8");
 
                         // save file and change import
 
+                        const relativePath = new FilePath(cssFilePath)
+                            .relativeTo(new FilePath(rule.source.input.file));
+
                         const replacedRule = new AtRule({
                             name: 'import',
-                            params: cssFilePath,
+                            params: `"${relativePath}"`,
                             source: rule.source,
                           });
 
-                        replacedRule[jsProcessed] = true;
+                        // replacedRule[jsProcessed] = true;
 
                         rule.before(replacedRule);
                         
