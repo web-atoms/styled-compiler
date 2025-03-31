@@ -34,4 +34,8 @@ export default class FilePath {
         return this.filePath;
     }
 
+    changeExtension(ext: string) {
+        return path.join(this.dir, this.baseName + ext);
+    }
+
 }
