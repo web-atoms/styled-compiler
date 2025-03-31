@@ -1,5 +1,5 @@
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 
 export default class FilePath {
 
@@ -9,6 +9,10 @@ export default class FilePath {
     public readonly name: string;
     public readonly baseName: string;
     public readonly ext: string;
+
+    public get fileUrl() {
+        return pathToFileURL(this.filePath).toString();
+    }
 
     constructor(
         filePath: string

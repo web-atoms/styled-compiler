@@ -1,13 +1,13 @@
 import path from "path";
 import valueParser from "postcss-value-parser";
 import { SourceNode } from "source-map";
-import SourceMapReMap from "./SourceMapReMap";
+import SourceMapReMap from "./SourceMapReMap.js";
 import { writeFile } from "fs/promises";
-import FilePath from "./FilePath";
+import FilePath from "./FilePath.js";
 
 const jsProcessed = Symbol("jsProcessed");
 
-const plugin =(opts = {}) => {
+const postCssImportJs =(opts = {}) => {
     return {
         postcssPlugin: "postcss-js",
         Once(root, { AtRule, result}) {
@@ -20,7 +20,7 @@ const plugin =(opts = {}) => {
                 }
                 rule[jsProcessed] = true;
 
-                promisesList.push(new Promise(async (resolve) => {
+                promisesList.push(new Promise<void>(async (resolve) => {
 
                     const params = valueParser(rule.params).nodes;
 
@@ -41,8 +41,8 @@ const plugin =(opts = {}) => {
                             continue;
                         }
 
-                        const nodeFilePath = new FilePath(path.join(dirName, param.value));
-                        const fileResult = (await import(nodeFilePath.filePath))?.default as SourceNode;
+                        const nodeFilePath = new FilePath(path.resolve(dirName, param.value));
+                        const fileResult = (await import(nodeFilePath.fileUrl))?.default as SourceNode;
 
                         if (!fileResult) {
                             result.warn(`JavaScript file did not return Style object` , {
@@ -51,16 +51,15 @@ const plugin =(opts = {}) => {
                             continue;
                         }
 
-                        const fp = new FilePath(dirName);
+                        const fp = new FilePath(nodeFilePath.dir);
                         
                         const sourceRoot = fp.webPath;
 
-                        const cssFilePath = nodeFilePath.changeExtension(".css");
+                        const cssFilePath = nodeFilePath.filePath.replace(".css.js", ".css");
 
                         const { code: source, map: sourceMap } = fileResult.toStringWithSourceMap({});
-                        const inputSourceMap = nodeFilePath + ".map";
                         await writeFile(cssFilePath, source, "utf-8");
-                        await writeFile(inputSourceMap, SourceMapReMap.save(sourceMap, sourceRoot), "utf-8");
+                        await writeFile(cssFilePath + ".map", SourceMapReMap.save(sourceMap, sourceRoot), "utf-8");
 
                         // save file and change import
 
@@ -77,6 +76,8 @@ const plugin =(opts = {}) => {
                     }
 
                     rule.remove();
+
+                    resolve();
                 }));
             });
 
@@ -84,5 +85,5 @@ const plugin =(opts = {}) => {
         }
     };    
 };
-plugin.postcss = true;
-export default plugin;
+postCssImportJs.postcss = true;
+export default postCssImportJs;

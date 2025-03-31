@@ -11,6 +11,7 @@ import postCssImportExtGlob from "postcss-import-ext-glob";
 import cssNano from "cssnano";
 import SourceMapReMap from "./SourceMapReMap.js";
 import FilePath from "./FilePath.js";
+import postCssImportJs from "./postcss-js.js";
 
 const inputFile = process.argv[2];
 const inputFileNameParsed = path.parse(inputFile);
@@ -43,9 +44,10 @@ async function run() {
         const inputSourceMap = filePath + ".map";
         await writeFile(inputSourceMap, SourceMapReMap.save(sourceMap, sourceRoot));
         const result = await postCss([
-            postCssNested,
             postCssImportExtGlob({ sort: "desc"}),
+            postCssImportJs(),
             postCssImport,
+            postCssNested,
             cssNano({ preset: "default"})
         ])
             .process(source, {

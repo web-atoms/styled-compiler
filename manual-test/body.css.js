@@ -9,8 +9,7 @@ const animations = [["div", "yellow"], ["section", "green"]].map(([name, color])
 
 export default styled.css `
 
-    @import-glob "./vars/**/*.css.js";
-    @import-glob "./vars/**/*.css";
+    @import "./vars/vars.css.js";
 
     body {
         font-weight: 500;
