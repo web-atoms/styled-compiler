@@ -9,7 +9,6 @@ const animations = [["div", "yellow"], ["section", "green"]].map(([name, color])
 
 export default styled.css `
 
-    @import "./vars/vars.css.js";
     @import "./vars/a.css";
 
     body {

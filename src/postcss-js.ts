@@ -13,7 +13,7 @@ const postCssImportJs =(opts = {}) => {
         Once(root, { AtRule, result}) {
             const promisesList = [];
 
-            root.walkAtRules("import", (rule) => {
+            root.walkAtRules("import-js", (rule) => {
 
                 if (rule[jsProcessed]) {
                     return;

@@ -60,7 +60,7 @@ async function run() {
                 },
                 to: outputFilePath
             });
-        // await unlink(inputSourceMap);
+        await unlink(inputSourceMap);
         await writeFile(outputFilePath, result.css);
         await writeFile(outputFilePath + ".map", JSON.stringify(result.map.toJSON()));
 
